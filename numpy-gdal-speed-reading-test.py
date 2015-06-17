@@ -32,7 +32,7 @@ for x in range(num_slices):
     exec("del array")
     
 dataset = None
-#bails at 5800-6000, i.e. 6000*17000=102000000 is number of pixels read
+#will bail at 5800-6000, i.e. after 6000*17000=102000000 pixels read
 
 #read with GDAL without exec - whole
 t = time.time()
