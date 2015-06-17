@@ -7,7 +7,7 @@ import rasterio
 
 f = "2014.05.09.tif"
 
-#the whole thing
+#read with GDAL via exec - whole
 t = time.time()
 dataset = gdal.Open(f, GA_ReadOnly)
 band = dataset.GetRasterBand(1)
@@ -16,7 +16,7 @@ print "Reading all (exec), load time = " + str(round(time.time() - t,4))
 dataset = None
 exec("del array")
 
-#now in a cycle
+#read with GDAL via exec - slices
 cols = 43000
 rows = band.YSize
 slice_width = 200   #i.e. 200*17000=3400000 is number of pixels to read in with each slice
@@ -34,7 +34,7 @@ for x in range(num_slices):
 dataset = None
 #bails at 5800-6000, i.e. 6000*17000=102000000 is number of pixels read
 
-#try reading without exec - whole
+#read with GDAL without exec - whole
 t = time.time()
 dataset = gdal.Open(f, GA_ReadOnly)
 band = dataset.GetRasterBand(1)
@@ -42,7 +42,7 @@ array = dataset.ReadAsArray(0, 0, band.XSize, band.YSize)
 dataset = None
 print "Reading all (no exec), load time = " + str(round(time.time() - t,4))
 
-#try reading without exec - pieces
+#read with GDAL without exec - slices
 dataset = gdal.Open(f, GA_ReadOnly)
 band = dataset.GetRasterBand(1)
 for x in range(num_slices):
@@ -53,13 +53,13 @@ for x in range(num_slices):
     
 dataset = None
 
-#try reading with rasterio
+#read with rasterio - whole
 t = time.time()
 with rasterio.open(f) as src:
     d = src.read()
 print "Reading all (rasterio), load time = " + str(round(time.time() - t,4))
 
-#try reading without rasterio - pieces
+#read with rasterio - slices
 t = time.time()
 with rasterio.open(f) as src:
     for x in range(num_slices):
